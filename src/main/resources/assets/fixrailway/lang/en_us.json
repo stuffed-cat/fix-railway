@@ -1,6 +1,25 @@
 {
-  "fixrailway.example_item": "Example Item",
-  "fixrailway.example_block": "Example Block",
-  "fixrailway.item_description": "This is an example item from the fix-railway mod.",
-  "fixrailway.block_description": "This is an example block from the fix-railway mod."
+  "block.fixrailway.example_railway_block": "Railway Block",
+  "block.fixrailway.high_speed_rail": "High Speed Rail",
+  "block.fixrailway.rail_crossing": "Rail Crossing",
+  "block.fixrailway.rail_signal": "Railway Signal",
+  
+  "item.fixrailway.example_railway_item": "Railway Component",
+  "item.fixrailway.railway_wrench": "Railway Wrench",
+  "item.fixrailway.high_speed_rail_component": "High Speed Rail Component",
+  "item.fixrailway.signal_controller": "Signal Controller",
+  
+  "itemGroup.fixrailway": "Fix Railway",
+  
+  "tooltip.fixrailway.railway_wrench": "Used to configure and repair railway blocks",
+  "tooltip.fixrailway.high_speed_rail": "Increases minecart speed by %s×",
+  "tooltip.fixrailway.signal_controller": "Controls railway signals remotely",
+  
+  "message.fixrailway.rail_repaired": "Railway repaired (%s blocks)",
+  "message.fixrailway.config_changed": "Configuration updated",
+  
+  "config.fixrailway.highSpeedRailMultiplier": "High Speed Rail Multiplier",
+  "config.fixrailway.enableAutoRailRepair": "Enable Automatic Rail Repair",
+  "config.fixrailway.signalRange": "Signal Range",
+  "config.fixrailway.railEnergyUsage": "Rail Energy Usage"
 }

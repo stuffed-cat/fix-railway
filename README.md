@@ -1,5 +1,6 @@
 # fix-railway
 
+fix-railway 是一个修复在Arclight中修复机械动力火车可能存在的问题的模组。
 This project is a Minecraft mod for version 1.19.2, built using Forge 43.3.8. The mod introduces new blocks and items, enhancing the gameplay experience. Below is a brief overview of the project's structure and key components:
 
 ## Project Structure

@@ -1,24 +1,27 @@
 package com.example.fixrailway.init;
 
+import com.example.fixrailway.FixRailway;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemGroup;
-import net.minecraftforge.event.CreativeModeTabEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-@Mod.EventBusSubscriber(modid = "fixrailway")
 public class ItemInit {
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "fixrailway");
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, FixRailway.MODID);
 
-    public static final RegistryObject<Item> EXAMPLE_ITEM = ITEMS.register("example_item", () -> new Item(new Item.Properties().tab(ItemGroup.TAB_MISC)));
-
-    @SubscribeEvent
-    public static void addCreativeTabs(CreativeModeTabEvent.BuildContents event) {
-        if (event.getTab() == ItemGroup.TAB_MISC) {
-            event.accept(EXAMPLE_ITEM);
-        }
-    }
+    // 示例铁路物品
+    public static final RegistryObject<Item> EXAMPLE_RAILWAY_ITEM = ITEMS.register("example_railway_item", 
+        () -> new Item(new Item.Properties()));
+    
+    // 铁路工具
+    public static final RegistryObject<Item> RAILWAY_WRENCH = ITEMS.register("railway_wrench", 
+        () -> new Item(new Item.Properties().durability(250)));
+    
+    // 高速铁路组件
+    public static final RegistryObject<Item> HIGH_SPEED_RAIL_COMPONENT = ITEMS.register("high_speed_rail_component", 
+        () -> new Item(new Item.Properties()));
+    
+    // 铁路信号控制器
+    public static final RegistryObject<Item> SIGNAL_CONTROLLER = ITEMS.register("signal_controller", 
+        () -> new Item(new Item.Properties().stacksTo(1)));
 }
