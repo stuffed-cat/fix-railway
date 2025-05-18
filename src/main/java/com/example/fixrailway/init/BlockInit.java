@@ -4,7 +4,6 @@ import com.example.fixrailway.FixRailway;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -60,6 +59,6 @@ public class BlockInit {
     
     // 助手方法 - 为方块注册一个物品
     private static <T extends Block> void registerBlockItem(String name, RegistryObject<T> block) {
-        ItemInit.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        ItemInit.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().tab(FixRailway.RAILWAY_TAB)));
     }
 }

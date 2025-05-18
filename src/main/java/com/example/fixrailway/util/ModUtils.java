@@ -162,7 +162,6 @@ public class ModUtils {
         // 返回一个示例值
         return 0;
     }
-}
     
     /**
      * 修复周围的铁路方块（如果有问题）。
@@ -190,7 +189,7 @@ public class ModUtils {
                     // 这里是一个简化的示例，实际逻辑可能更复杂
                     if (shouldHaveRail(level, checkPos) && !isRailwayBlock(level, checkPos)) {
                         // 放置一个适当的铁轨类型
-                        level.setBlock(checkPos, Blocks.RAIL.defaultBlockState(), 3);
+                        level.setBlock(checkPos, net.minecraft.world.level.block.Blocks.RAIL.defaultBlockState(), 3);
                         repaired++;
                         
                         FixRailway.LOGGER.info("Repaired railway at {}", checkPos);
@@ -221,6 +220,19 @@ public class ModUtils {
         
         // 如果周围至少有两个铁轨，这个位置可能应该有铁轨
         return railsAround >= 2;
+    }
+    
+    /**
+     * 判断一个位置是否包含铁路方块
+     */
+    private static boolean isRailwayBlock(Level level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        Block block = state.getBlock();
+        
+        // 检查是否是原版铁轨
+        return block instanceof net.minecraft.world.level.block.BaseRailBlock ||
+               // 或者是Create的铁轨
+               isCreateTrackBlock(state);
     }
     
     /**

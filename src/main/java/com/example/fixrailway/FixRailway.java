@@ -3,10 +3,10 @@ package com.example.fixrailway;
 import com.example.fixrailway.config.Config;
 import com.example.fixrailway.init.BlockInit;
 import com.example.fixrailway.init.ItemInit;
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,7 +34,6 @@ public class FixRailway {
 
         // Register the setup method for modloading
         modEventBus.addListener(this::onCommonSetup);
-        modEventBus.addListener(this::onCreativeModeTabRegister);
 
         // Register our mod's config
         Config.register();
@@ -59,23 +58,14 @@ public class FixRailway {
         });
     }
 
-    private void onCreativeModeTabRegister(CreativeModeTabEvent.BuildContents event) {
-        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS) {
-            // Add railway blocks to the building blocks tab
-            event.accept(BlockInit.EXAMPLE_RAILWAY_BLOCK);
-            event.accept(BlockInit.HIGH_SPEED_RAIL);
-            event.accept(BlockInit.RAIL_CROSSING);
-            event.accept(BlockInit.RAIL_SIGNAL);
+    // 在Minecraft 1.19.2中，使用标准的CreativeModeTab设置方法
+    // 定义我们的创造模式物品栏
+    public static final CreativeModeTab RAILWAY_TAB = new CreativeModeTab("fixrailway") {
+        @Override
+        public ItemStack makeIcon() {
+            return new ItemStack(ItemInit.RAILWAY_WRENCH.get());
         }
-        
-        if (event.getTab() == CreativeModeTabs.REDSTONE_BLOCKS) {
-            // Add railway items to the redstone tab
-            event.accept(ItemInit.EXAMPLE_RAILWAY_ITEM);
-            event.accept(ItemInit.RAILWAY_WRENCH);
-            event.accept(ItemInit.HIGH_SPEED_RAIL_COMPONENT);
-            event.accept(ItemInit.SIGNAL_CONTROLLER);
-        }
-    }
+    };
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent

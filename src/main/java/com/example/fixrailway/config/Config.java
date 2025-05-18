@@ -23,6 +23,9 @@ public class Config {
     // 同步间隔（刻）
     public static final ForgeConfigSpec.IntValue SYNC_INTERVAL;
     
+    // 高速铁路速度倍增值
+    public static final ForgeConfigSpec.DoubleValue HIGH_SPEED_RAIL_MULTIPLIER;
+    
     // 启用调试模式
     public static final ForgeConfigSpec.BooleanValue DEBUG_MODE;
 
@@ -47,6 +50,10 @@ public class Config {
         SYNC_INTERVAL = builder
                 .comment("客户端与服务端铁路数据同步间隔（以游戏刻为单位)")
                 .defineInRange("syncInterval", 20, 1, 200);
+        
+        HIGH_SPEED_RAIL_MULTIPLIER = builder
+                .comment("高速铁路速度倍增值，应用于高速铁路上的实体")
+                .defineInRange("highSpeedRailMultiplier", 1.5, 1.0, 5.0);
         
         DEBUG_MODE = builder
                 .comment("启用调试模式，在日志中输出更多关于铁路修复的信息")
