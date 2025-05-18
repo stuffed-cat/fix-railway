@@ -1,0 +1,11 @@
+# fix-railway
+
+modLoader="javafml"
+loaderVersion="[43.3.8,)"
+license="MIT"
+issueTrackerURL="https://github.com/example/fix-railway/issues"
+displayName="Fix Railway"
+version="1.0.0"
+description="A mod to enhance railway systems in Minecraft."
+authors="YourName"
+credits="Special thanks to the Minecraft modding community."

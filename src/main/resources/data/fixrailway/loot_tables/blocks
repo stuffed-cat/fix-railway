@@ -1,0 +1,31 @@
+<!-- filepath: d:\dev\fix-railway\src\main\resources\data\fixrailway\loot_tables\blocks -->
+{
+  "type": "minecraft:loot_table",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "fixrailway:your_block_name",
+          "functions": [
+            {
+              "function": "minecraft:apply_bonus",
+              "formula": "minecraft:uniform_bonus",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "items": [
+                      "minecraft:your_tool"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
