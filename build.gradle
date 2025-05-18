@@ -1,7 +1,24 @@
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
+        maven { 
+            url = 'https://maven.minecraftforge.net' 
+            metadataSources {
+                mavenPom()
+                artifact()
+            }
+            content {
+                includeGroup 'net.minecraftforge'
+                includeGroup 'net.minecraftforge.gradle'
+            }
+        }
         mavenCentral()
+        gradlePluginPortal()
+        maven { url = 'https://libraries.minecraft.net/' }
+        maven { url = 'https://repo.spongepowered.org/maven' }
+        maven { url = 'https://maven.parchmentmc.org' }
+        // 添加更多可能的存储库以解决依赖问题
+        maven { url = 'https://maven.fabricmc.net/' }
+        maven { url = 'https://jitpack.io' }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
@@ -18,15 +35,62 @@ archivesBaseName = 'fixrailway'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
+repositories {
+    maven { 
+        url = 'https://maven.minecraftforge.net/' 
+        metadataSources {
+            mavenPom()
+            artifact()
+        }
+    }
+    mavenCentral()
+    // 添加更多存储库
+    maven { url = 'https://libraries.minecraft.net/' }
+    maven { url = 'https://repo.spongepowered.org/maven' }
+    maven { url = 'https://thedarkcolour.github.io/KotlinForForge/' }
+    maven { url = 'https://maven.parchmentmc.org' }
+    maven { url = 'https://maven.fabricmc.net/' }
+    maven { url = 'https://jitpack.io' }
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 println "Java: ${System.getProperty('java.version')}, JVM: ${System.getProperty('java.vm.version')} (${System.getProperty('java.vendor')}), Arch: ${System.getProperty('os.arch')}"
+
+// 设置网络配置
+System.setProperty("https.protocols", "TLSv1.2,TLSv1.1,TLSv1")
+System.setProperty("javax.net.ssl.trustStoreType", "Windows-ROOT")
+System.setProperty("java.net.preferIPv4Stack", "true")
+
+// 禁用SSL证书验证 (仅用于开发环境)
+javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(new javax.net.ssl.HostnameVerifier() {
+    public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) {
+        return true;
+    }
+})
+
 minecraft {
     mappings channel: 'official', version: '1.19.2'
+
+    // 添加accessTransformer配置，如果需要的话
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            
+            // 添加必要的JVM参数
+            jvmArg '-XX:+IgnoreUnrecognizedVMOptions'
+            jvmArg '-XX:+AllowEnhancedClassRedefinition'
+            jvmArg '-Dfml.ignoreInvalidMinecraftCertificates=true'
+            jvmArg '-Dfml.ignorePatchDiscrepancies=true'
+            jvmArg '-Dnet.minecraftforge.gradle.check.network=false'
+            jvmArg '-Dforge.logging.console.level=debug'
+            jvmArg '-Dmixin.debug=true'
+            
             mods {
                 fixrailway {
                     source sourceSets.main
@@ -38,6 +102,14 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            
+            // 添加必要的JVM参数
+            jvmArg '-XX:+IgnoreUnrecognizedVMOptions'
+            jvmArg '-Dfml.ignoreInvalidMinecraftCertificates=true'
+            jvmArg '-Dfml.ignorePatchDiscrepancies=true'
+            jvmArg '-Dnet.minecraftforge.gradle.check.network=false'
+            jvmArg '-Dforge.logging.console.level=debug'
+            
             mods {
                 fixrailway {
                     source sourceSets.main
@@ -59,6 +131,7 @@ minecraft {
     }
 }
 
+// 如果生成的资源目录存在，则包含它
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
@@ -67,8 +140,16 @@ repositories {
 }
 
 dependencies {
+    // 指定Minecraft Forge依赖
     minecraft 'net.minecraftforge:forge:1.19.2-43.3.8'
-    // Add dependencies here
+
+    // 如果需要，添加其他依赖
+    // compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
+    // runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    
+    // 测试依赖
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 jar {
@@ -85,8 +166,15 @@ jar {
     }
 }
 
+// 配置重新混淆 JAR
 jar.finalizedBy('reobfJar')
 
+// 配置测试
+test {
+    useJUnitPlatform()
+}
+
+// 配置 Maven 发布
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -100,6 +188,15 @@ publishing {
     }
 }
 
+// 配置 Java 编译
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:deprecation" // 显示弃用警告
+}
+
+// 添加额外任务来清理缓存
+task cleanCache(type: Delete) {
+    delete fileTree(dir: "${gradle.gradleUserHomeDir}/caches/forge_gradle/", include: "**/*.jar")
+    delete fileTree(dir: "${gradle.gradleUserHomeDir}/caches/minecraft/", include: "**/*.jar")
+    println "Cache cleaned"
 }
