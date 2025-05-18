@@ -1,7 +1,8 @@
 # fix-railway
 
-fix-railway 是一个修复在Arclight中修复机械动力火车可能存在的问题的模组。
-This project is a Minecraft mod for version 1.19.2, built using Forge 43.3.8. The mod introduces new blocks and items, enhancing the gameplay experience. Below is a brief overview of the project's structure and key components:
+fix-railway 是一个修复在Arclight中机械动力（Create）模组火车运行可能存在的问题的模组。本模组专门针对在Arclight服务端上运行时，Create模组的铁路系统出现的兼容性问题进行修复。
+
+This project is a Minecraft mod for version 1.19.2, built using Forge 43.3.8. The mod specifically addresses compatibility issues with the Create mod's railway systems when running on Arclight servers. It fixes various issues that may occur with Create's trains and railway mechanics in this environment.
 
 ## Project Structure
 

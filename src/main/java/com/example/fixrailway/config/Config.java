@@ -4,42 +4,53 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
+/**
+ * 配置类 - 处理模组的各种配置选项
+ * 这些选项允许玩家和服务器管理员微调修复功能的行为
+ */
 public class Config {
     public static final ForgeConfigSpec COMMON_SPEC;
     
-    // 高速铁路速度倍增器
-    public static final ForgeConfigSpec.DoubleValue HIGH_SPEED_RAIL_MULTIPLIER;
+    // Create模组火车速度修正因子
+    public static final ForgeConfigSpec.DoubleValue CREATE_TRAIN_SPEED_FIX;
     
     // 启用自动修复铁路功能
     public static final ForgeConfigSpec.BooleanValue ENABLE_AUTO_RAIL_REPAIR;
     
-    // 信号灯范围（方块数）
-    public static final ForgeConfigSpec.IntValue SIGNAL_RANGE;
+    // Create信号灯修复
+    public static final ForgeConfigSpec.BooleanValue FIX_CREATE_SIGNALS;
     
-    // 铁路能耗（能量单位/方块）
-    public static final ForgeConfigSpec.IntValue RAIL_ENERGY_USAGE;
+    // 同步间隔（刻）
+    public static final ForgeConfigSpec.IntValue SYNC_INTERVAL;
+    
+    // 启用调试模式
+    public static final ForgeConfigSpec.BooleanValue DEBUG_MODE;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         
-        builder.comment("FixRailway Mod Configuration")
+        builder.comment("FixRailway Mod Configuration - Arclight服务端Create模组铁路修复")
                .push("general");
         
-        HIGH_SPEED_RAIL_MULTIPLIER = builder
-                .comment("Speed multiplier for entities traveling on high speed rails")
-                .defineInRange("highSpeedRailMultiplier", 2.0, 1.0, 10.0);
+        CREATE_TRAIN_SPEED_FIX = builder
+                .comment("修正Create模组列车在Arclight服务端上的速度问题的修正因子")
+                .defineInRange("createTrainSpeedFix", 1.0, 0.1, 5.0);
         
         ENABLE_AUTO_RAIL_REPAIR = builder
-                .comment("Enable automatic repair of broken rails")
+                .comment("启用自动修复损坏或不同步的Create铁轨功能")
                 .define("enableAutoRailRepair", true);
         
-        SIGNAL_RANGE = builder
-                .comment("The range in blocks that rail signals can detect entities")
-                .defineInRange("signalRange", 16, 1, 64);
+        FIX_CREATE_SIGNALS = builder
+                .comment("修复Create模组信号灯在Arclight服务端上的同步问题")
+                .define("fixCreateSignals", true);
         
-        RAIL_ENERGY_USAGE = builder
-                .comment("Energy usage per block for powered railways (in FE/RF)")
-                .defineInRange("railEnergyUsage", 5, 0, 1000);
+        SYNC_INTERVAL = builder
+                .comment("客户端与服务端铁路数据同步间隔（以游戏刻为单位)")
+                .defineInRange("syncInterval", 20, 1, 200);
+        
+        DEBUG_MODE = builder
+                .comment("启用调试模式，在日志中输出更多关于铁路修复的信息")
+                .define("debugMode", false);
         
         builder.pop();
         

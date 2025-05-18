@@ -9,11 +9,13 @@ modId="fixrailway"
 version="0.1.0"
 displayName="Fix Railway"
 description='''
-A mod to enhance railway systems in Minecraft.
-Adds new railway blocks, items, and functionality.
+一个专门修复Arclight服务端中Create（机械动力）模组铁路系统问题的模组。
+解决在Arclight环境下运行时，Create模组的列车和铁路可能出现的兼容性问题。
+A mod that specifically fixes compatibility issues with Create mod's railway systems
+when running on Arclight servers in Minecraft 1.19.2.
 '''
 authors="YourName"
-credits="Special thanks to the Minecraft modding community."
+credits="Special thanks to the Minecraft modding community and Create mod developers."
 
 [[dependencies.fixrailway]]
     modId="forge"

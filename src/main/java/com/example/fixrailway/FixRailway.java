@@ -18,6 +18,12 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * FixRailway - 修复Arclight服务端中机械动力（Create）模组铁路系统的兼容性问题
+ * 
+ * 此模组专门解决在Arclight服务端环境中运行Create模组时，
+ * 铁路和列车系统可能出现的各种问题，确保它们能够正常工作。
+ */
 @Mod(FixRailway.MODID)
 public class FixRailway {
     public static final String MODID = "fixrailway";
@@ -40,7 +46,7 @@ public class FixRailway {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         
-        LOGGER.info("FixRailway mod initialization complete");
+        LOGGER.info("FixRailway mod initialization complete - 准备修复Arclight中的Create铁路问题");
     }
 
     private void onCommonSetup(final FMLCommonSetupEvent event) {

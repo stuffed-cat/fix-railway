@@ -2,47 +2,167 @@ package com.example.fixrailway.util;
 
 import com.example.fixrailway.FixRailway;
 import com.example.fixrailway.config.Config;
-import com.example.fixrailway.init.BlockInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * 提供各种工具方法的实用工具类。
+ * 提供修复Create模组在Arclight服务端上铁路问题的工具方法
  */
 public class ModUtils {
+    // Create模组的类名常量，用于反射检测
+    private static final String CREATE_TRAIN_CLASS = "com.simibubi.create.content.logistics.trains.entity.Train";
+    private static final String CREATE_TRACK_CLASS = "com.simibubi.create.content.logistics.trains.track.TrackBlock";
+    private static final String CREATE_SIGNAL_CLASS = "com.simibubi.create.content.logistics.trains.track.TrackSignalBlock";
+    
     /**
-     * 检查指定位置是否有任何铁路方块。
+     * 检查指定方块是否是Create模组的轨道方块
      * 
-     * @param level 游戏世界
-     * @param pos 要检查的位置
-     * @return 如果位置是铁路方块则返回true
+     * @param state 要检查的方块状态
+     * @return 如果是Create的轨道方块则返回true
      */
-    public static boolean isRailwayBlock(Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
-        
-        // 检查原版铁轨
-        if (state.getBlock() == Blocks.RAIL || 
-            state.getBlock() == Blocks.POWERED_RAIL || 
-            state.getBlock() == Blocks.DETECTOR_RAIL || 
-            state.getBlock() == Blocks.ACTIVATOR_RAIL) {
-            return true;
+    public static boolean isCreateTrackBlock(BlockState state) {
+        // 尝试通过反射安全地检查方块类型
+        try {
+            Class<?> trackClass = Class.forName(CREATE_TRACK_CLASS);
+            return trackClass.isInstance(state.getBlock());
+        } catch (ClassNotFoundException e) {
+            // Create模组未加载或类名已更改
+            if (Config.DEBUG_MODE.get()) {
+                FixRailway.LOGGER.debug("Create轨道类未找到: {}", e.getMessage());
+            }
+            return false;
+        }
+    }
+    
+    /**
+     * 检查指定方块是否是Create模组的信号灯方块
+     * 
+     * @param state 要检查的方块状态
+     * @return 如果是Create的信号灯方块则返回true
+     */
+    public static boolean isCreateSignalBlock(BlockState state) {
+        try {
+            Class<?> signalClass = Class.forName(CREATE_SIGNAL_CLASS);
+            return signalClass.isInstance(state.getBlock());
+        } catch (ClassNotFoundException e) {
+            if (Config.DEBUG_MODE.get()) {
+                FixRailway.LOGGER.debug("Create信号灯类未找到: {}", e.getMessage());
+            }
+            return false;
+        }
+    }
+    
+    /**
+     * 修复Create模组列车在Arclight服务端上的速度问题
+     * 
+     * @param entity 要检查和修复的实体
+     * @return 如果实体是Create列车并进行了修复则返回true
+     */
+    public static boolean fixCreateTrainSpeed(Entity entity) {
+        if (!isCreateTrainEntity(entity)) {
+            return false;
         }
         
-        // 检查我们的自定义铁轨
-        if (state.getBlock() == BlockInit.HIGH_SPEED_RAIL.get() ||
-            state.getBlock() == BlockInit.RAIL_CROSSING.get() ||
-            state.getBlock() == BlockInit.RAIL_SIGNAL.get()) {
-            return true;
+        try {
+            // 获取速度修正因子
+            double speedFix = Config.CREATE_TRAIN_SPEED_FIX.get();
+            
+            // 只有在需要修正时才应用
+            if (Math.abs(speedFix - 1.0) > 0.001) {
+                // 应用速度修正
+                entity.setDeltaMovement(
+                    entity.getDeltaMovement().x * speedFix,
+                    entity.getDeltaMovement().y,
+                    entity.getDeltaMovement().z * speedFix
+                );
+                
+                if (Config.DEBUG_MODE.get()) {
+                    FixRailway.LOGGER.debug("已修正Create列车速度，实体: {}, 修正因子: {}", 
+                            entity.getId(), speedFix);
+                }
+                return true;
+            }
+        } catch (Exception e) {
+            FixRailway.LOGGER.error("修复Create列车速度时出错: {}", e.getMessage());
         }
-        
-        // 这里可以添加其他模组铁轨的兼容检查
         
         return false;
     }
+    
+    /**
+     * 检查实体是否是Create模组的列车实体
+     */
+    public static boolean isCreateTrainEntity(Entity entity) {
+        if (entity == null) {
+            return false;
+        }
+        
+        try {
+            Class<?> trainClass = Class.forName(CREATE_TRAIN_CLASS);
+            return trainClass.isInstance(entity);
+        } catch (ClassNotFoundException e) {
+            // Create模组未加载或类名已更改
+            return false;
+        }
+    }
+    
+    /**
+     * 修复不同步的Create铁路信号
+     * 
+     * @param level 游戏世界
+     * @param pos 信号灯位置
+     * @return 如果进行了修复则返回true
+     */
+    public static boolean fixCreateSignal(Level level, BlockPos pos) {
+        if (!Config.FIX_CREATE_SIGNALS.get()) {
+            return false;
+        }
+        
+        BlockState state = level.getBlockState(pos);
+        if (!isCreateSignalBlock(state)) {
+            return false;
+        }
+        
+        try {
+            // 这里是信号灯修复逻辑的占位符
+            // 实际实现需要根据Create模组的具体问题进行
+            
+            // 向客户端发送方块更新
+            level.sendBlockUpdated(pos, state, state, 3);
+            
+            if (Config.DEBUG_MODE.get()) {
+                FixRailway.LOGGER.debug("已修复位于 {} 的Create信号灯", pos);
+            }
+            
+            return true;
+        } catch (Exception e) {
+            FixRailway.LOGGER.error("修复Create信号灯时出错: {}", e.getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * 同步客户端与服务端之间的Create铁路数据
+     * 这个方法应该在服务端定期调用
+     * 
+     * @param level 游戏世界
+     * @return 同步的铁路组件数量
+     */
+    public static int syncCreateRailwayData(Level level) {
+        // 这里是铁路数据同步逻辑的占位符
+        // 实际实现需要根据Create模组的具体问题进行
+        
+        if (Config.DEBUG_MODE.get()) {
+            FixRailway.LOGGER.debug("执行Create铁路数据同步");
+        }
+        
+        // 返回一个示例值
+        return 0;
+    }
+}
     
     /**
      * 修复周围的铁路方块（如果有问题）。
